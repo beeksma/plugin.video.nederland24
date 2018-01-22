@@ -80,6 +80,10 @@ def index():
             addLink(channel[0], channel[2], "playVideo", os.path.join(IMG_DIR, channel[1]), channel[3])
         else:
             xbmc.log("plugin.video.nederland24:: %s not set" % str(channel[0]))
+    if int(settings.getSetting("Depth_DagJournaal")) != 0:
+        url = 'http://feeds.nos.nl/journaal'
+        depth = int(settings.getSetting("Depth_DagJournaal"))
+        additionalChannels(url, depth)
     if int(settings.getSetting("Depth_Acht")) != 0:
         url = 'http://feeds.nos.nl/journaal20uur'
         depth = int(settings.getSetting("Depth_Acht"))
