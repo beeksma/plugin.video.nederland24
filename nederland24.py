@@ -180,10 +180,11 @@ def additionalChannels(url, depth):
             url = tag.find('media:content')['url']
             img = os.path.join(IMG_DIR, "npo_placeholder.png")
             addLink(title, url, "playVideo", img, '')
-        finally:
             i += 1
             if i == int(depth):
                 break
+        except (AttributeError): # Prevent error when there are no additional channels available
+            break
 
 
 def playVideo(url):
