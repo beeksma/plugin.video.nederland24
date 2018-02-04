@@ -74,6 +74,14 @@ EVENTCHANNELS = [
   ["NPO Event 3", "npo_placeholder.png", "LI_NEDERLAND3_221713", "NPO Evenementkanaal 3."],
 ]
 
+
+class Feed(object):
+    def __init__(self, title, url, img):
+        self.title = title
+        self.url = url
+        self.image = img
+
+
 def index():
     for channel in CHANNELS:
         if settings.getSetting(channel[0]) == 'true':
@@ -169,22 +177,24 @@ def addLink(name, url, mode, iconimage, description):
     return ok
 
 
-def additionalChannels(url, depth):
+def additionalChannels(feed_url, depth):
     i = 0
-    URL = url
-    # URL = 'http://feeds.nos.nl/journaal'
     items = SoupStrainer('item')
-    for tag in BeautifulStoneSoup(urllib2.urlopen(URL).read(), parseOnlyThese=items):
+    items_to_add = []  # Create a list of distinct items to display
+    for tag in BeautifulStoneSoup(urllib2.urlopen(feed_url).read(), parseOnlyThese=items):
         try:
             title = tag.title.contents[0]
-            url = tag.find('media:content')['url']
+            tag_url = tag.find('media:content')['url']
             img = os.path.join(IMG_DIR, "npo_placeholder.png")
-            addLink(title, url, "playVideo", img, '')
-            i += 1
+            if not any(tag_url == item.url for item in items_to_add):
+                items_to_add.append(Feed(title, tag_url, img))
+                i += 1
             if i == int(depth):
                 break
-        except (AttributeError): # Prevent error when there are no additional channels available
+        except AttributeError:  # Prevent error when there are no additional channels available
             break
+    for item in items_to_add:
+        addLink(item.title, item.url, "playVideo", item.image, '')
 
 
 def playVideo(url):
