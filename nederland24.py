@@ -186,7 +186,7 @@ def additionalChannels(feed_url, depth):
             title = tag.title.contents[0]
             tag_url = tag.find('media:content')['url']
             img = os.path.join(IMG_DIR, "npo_placeholder.png")
-            if not any(tag_url == item.url for item in items_to_add):
+            if not any(title == item.title for item in items_to_add):
                 items_to_add.append(Feed(title, tag_url, img))
                 i += 1
             if i == int(depth):
